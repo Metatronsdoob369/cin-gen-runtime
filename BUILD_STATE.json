@@ -1,0 +1,7 @@
+{
+  "phase": "PHASE_0_REPOSITORY_TRUTH",
+  "gate": "SAFE",
+  "implementationAuthorized": false,
+  "stateChangingAdaptersEnabled": false,
+  "currentTask": "CG-000"
+}
