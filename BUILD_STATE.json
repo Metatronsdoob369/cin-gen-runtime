@@ -1,7 +1,17 @@
 {
-  "phase": "PHASE_0_REPOSITORY_TRUTH",
+  "phase": "PHASE_1_ENFORCEMENT_SPINE",
   "gate": "SAFE",
-  "implementationAuthorized": false,
+  "implementationAuthorized": true,
   "stateChangingAdaptersEnabled": false,
-  "currentTask": "CG-000"
+  "currentTask": "CG-010",
+  "completedTasks": ["CG-000", "CG-001"],
+  "authorizedSurfaces": [
+    "open-model-contracts/spec/contracts/v3/execution-gate",
+    "open-model-contracts/spec/contracts/index.ts",
+    "open-model-contracts/spec/json-schema",
+    "open-model-contracts/server/src/core",
+    "open-model-contracts/package.json#test"
+  ],
+  "charterPath": "docs/cin-gen/HYBRID_CINEMATIC_SYNTHESIS_CHARTER_v0.1.md",
+  "adrPath": "docs/cin-gen/ADR_001_OMC_CIN_GEN_BOUNDARY.md"
 }
