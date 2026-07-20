@@ -1,0 +1,126 @@
+%% OMC Active Topology — CG-000 (read-only map)
+%% Legend:
+%%   Solid edges  = wired at runtime (imports / HTTP / MCP tools)
+%%   Dashed edges = documented, stubbed, or bypass (not trustworthy mediation)
+%% Layers distinguished: Law, Generated projections, Informant, Governance runtime,
+%%   World adapters, Registry/history, Tests/CI
+
+flowchart TB
+  subgraph LAW["LAW — canonical Zod / specs"]
+    REG["spec/contracts/index.ts\nOMC_REGISTRY"]
+    V3["spec/contracts/v3/*\nZod schemas"]
+    DOM_LAW["spec/contracts/domicile/*\nparallel domicile contracts\n+ validateSpecialistGate expiry"]
+    GATES["spec/GATES.md\nSAFE/ARMED intent"]
+    ADMIT["spec/ADMISSION.md\nspec/domicile-governance/admission/*"]
+    CONST["constitution/*\nphase-gates, capabilities"]
+    PIPE_SCH["scripts/pipeline-contract/schemas.ts\nEve pipeline schemas"]
+    POP_SCH["popsim-contract + packs/*/schemas\nPopSimFullContractSchema"]
+  end
+
+  subgraph GEN["GENERATED PROJECTIONS"]
+    JSONSCH["spec/json-schema/*.schema.json"]
+    EXPORT["scripts/export-json-schema.ts\nnpm run gen:schema"]
+  end
+
+  subgraph INFORMANT["INFORMANT MCP — SAFE observation"]
+    INF["src/informant/mcp-server.ts\nomc-contract-informant v3.0.0"]
+    T_LIST["list_contracts"]
+    T_GET["get_contract"]
+    T_VAL["validate_payload\nZod safeParse"]
+    T_LAW["read_governance_law\nadmission/*.md only"]
+    T_REC["recall_checkpoint\nSTUB"]
+  end
+
+  subgraph GOVRT["GOVERNANCE RUNTIME — claimed SAFE/ARMED spine"]
+    ORCH["server/src/core/orchestrator.ts\nlocal ContractSchema\npresence-only ARMED\nreturns executed:true"]
+    POL["server/src/core/policy-engine.ts"]
+    AUD_MEM["server/src/core/audit-logger.ts\nin-memory only"]
+    SRV_MCP["server/src/index.ts\nopen-model-contracts v0.2.0\nstub tools / heuristic gate"]
+  end
+
+  subgraph ADAPTERS["WORLD ADAPTERS — real or pack-local mutation"]
+    BRIDGE["server/bridge\n/escrow /submit /telemetry"]
+    ESC_TTL["escrow-store TTL\nreal Date compare"]
+    AUD_JSONL["bridge audit-logger\nJSONL durable"]
+    SUBMIT["routes/submit.ts\nwriteFile + git push"]
+    LAWCRON["packs/roblox-game-automator\norchestrator.ts\nLLM + files + rojo"]
+    ESC_LUA["src/escrow/validatePayload.ts\nLua bridge escrow\nfake Zod + Governance Not Hooked"]
+    BOX["boxstar-omc-bootstrap/bridge\nduplicate Bridge surface"]
+  end
+
+  subgraph HIST["REGISTRY / HISTORY — evidence, not default imports"]
+    CKPT["registry/checkpoints/**"]
+    MAN["registry/MANIFEST.md"]
+    CKPT_SCR["scripts/checkpoint.sh\nship.sh rollback.sh\nMUTATING — do not run in CG-000"]
+  end
+
+  subgraph TESTS["TESTS / CI"]
+    CI_SCH["schema-sync.yml\nENFORCED drift"]
+    CI_REG["registry-gate.yml\ncheckpoint provenance"]
+    CI_VAL["checkpoint.yml\nvalidate-registry.ts"]
+    CI_AUTO["auto-registry.yml\nMUTATING on push"]
+    TEST_STUB["package.json test\necho stub"]
+    TEST_UI["tests/*.ts test:ui\nnot default CI"]
+  end
+
+  %% Law wiring
+  V3 --> REG
+  REG --> EXPORT
+  EXPORT --> JSONSCH
+  REG --> INF
+  ADMIT --> T_LAW
+  GATES -.-> ORCH
+  GATES -.-> SRV_MCP
+  DOM_LAW -.-> ORCH
+  PIPE_SCH -.-> EXPORT
+  POP_SCH -.-> LAWCRON
+  CONST -.-> LAWCRON
+
+  %% Informant tools
+  INF --> T_LIST
+  INF --> T_GET
+  INF --> T_VAL
+  INF --> T_LAW
+  INF --> T_REC
+  T_REC -.-> CKPT
+
+  %% Governance runtime (weak / stub)
+  ORCH --> AUD_MEM
+  ORCH --> POL
+  SRV_MCP -.-> ORCH
+  SRV_MCP -.-> BRIDGE
+
+  %% Adapters (bypass of ORCH)
+  BRIDGE --> ESC_TTL
+  BRIDGE --> AUD_JSONL
+  BRIDGE --> SUBMIT
+  LAWCRON --> BRIDGE
+  ESC_LUA --> LAWCRON
+  BOX -.-> BRIDGE
+
+  %% History / CI
+  CKPT_SCR --> CKPT
+  CKPT_SCR --> MAN
+  CI_SCH --> JSONSCH
+  CI_REG --> MAN
+  CI_VAL --> REG
+  CI_AUTO --> CKPT
+  TEST_STUB -.-> TESTS
+  TEST_UI -.-> BRIDGE
+
+  %% Styling by layer role
+  classDef law fill:#e8f0fe,stroke:#1a73e8;
+  classDef gen fill:#e6f4ea,stroke:#137333;
+  classDef info fill:#f3e8fd,stroke:#7b1fa2;
+  classDef stub fill:#fce8e6,stroke:#c5221f;
+  classDef adapt fill:#fff8e1,stroke:#f9ab00;
+  classDef hist fill:#f1f3f4,stroke:#5f6368;
+  classDef ci fill:#e0f7fa,stroke:#00838f;
+
+  class REG,V3,DOM_LAW,GATES,ADMIT,CONST,PIPE_SCH,POP_SCH law;
+  class JSONSCH,EXPORT gen;
+  class INF,T_LIST,T_GET,T_VAL,T_LAW info;
+  class T_REC,ORCH,POL,AUD_MEM,SRV_MCP,TEST_STUB stub;
+  class BRIDGE,ESC_TTL,AUD_JSONL,SUBMIT,LAWCRON,ESC_LUA,BOX adapt;
+  class CKPT,MAN,CKPT_SCR hist;
+  class CI_SCH,CI_REG,CI_VAL,CI_AUTO,TEST_UI ci;
