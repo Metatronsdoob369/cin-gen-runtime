@@ -11,6 +11,15 @@ Curious approach for **white-gloving** an intelligently bundled video generator:
 ## Minimal runtime blueprint
 
 1. **Input contract**: declarative JSON scene graph (`assets`, `cuts`, `overlays`, `voice`, `music`).
+   ```json
+   {
+     "assets": [{ "id": "intro", "src": "intro.mp4" }],
+     "cuts": [{ "assetId": "intro", "in": 0, "out": 6.5 }],
+     "overlays": [{ "type": "caption", "start": 1.2, "end": 4.8, "text": "Launch sequence" }],
+     "voice": { "track": "narration.wav" },
+     "music": { "track": "bed.wav", "duckAgainstVoice": true }
+   }
+   ```
 2. **Planning pass**: validate durations/transitions and compile to an execution timeline.
 3. **Render pass**: execute local media pipeline with deterministic presets.
 4. **Fallback policy**: if upstream APIs fail/rate-limit, degrade gracefully to local templates and previously cached outputs.
