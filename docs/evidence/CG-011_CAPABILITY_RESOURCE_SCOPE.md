@@ -79,3 +79,18 @@ Runtime records `reversible` on receipts for audit fidelity; gate decisions key 
 Executable: catalog-derived effect facts + exact action/resource bind on the spine.  
 Still intent: production catalog provenance, CI wiring, world mediation.  
 Smallest next repair: wire remote CI to `test:governance`, then catalog custody — not Unreal.
+
+---
+
+## CG-011R verification reconciliation
+
+CG-011R is authorized solely to repair the pre-existing Cin-Gen test-discovery harness. Verification was recorded across these environments:
+
+| Environment | Result |
+| --- | --- |
+| Normal worktree | Typecheck blocked by ancestor ambient types at `/Users/joewales/node_modules/@types` (`TS2688`); host contamination, not CG-011. |
+| Original isolated SHA `567c33e1473bcba994c272b719c719f222d70d72` | Typecheck passed; test discovery failed on literal `tests/**/*.test.ts`. |
+| Isolated CG-011R candidate | Full `npm run check` passed after the one-line `tests/*.test.ts` repair. |
+| Remote CI | Not run. |
+
+The authorized OMC SHA `dd6b95d351e6079e1997985c18f7b5f0fef1184a` remains unchanged. `BUILD_STATE.json` was not altered. CG-011 remains open pending this harness repair and then formal closure.

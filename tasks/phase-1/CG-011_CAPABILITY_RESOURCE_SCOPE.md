@@ -60,3 +60,28 @@ Unknown / disabled action; READ_ONLY+SAFE allow; STATE_CHANGE/IRREVERSIBLE+SAFE 
 ### Stop conditions
 
 Schema gen touching unrelated files; needing package.json/tsconfig; silent same-version semantics change; effect not derivable without caller trust; real adapter required for tests.
+
+---
+
+## CG-011R reconciliation appendix
+
+### Authorization and classification
+
+CG-011R authorizes a narrowly scoped verification-harness repair after the committed CG-011 documentation baseline (`567c33e1473bcba994c272b719c719f222d70d72`). It does not alter CG-011 governance semantics, OMC, or build state.
+
+| Observation | Classification | CG-011 relationship |
+| --- | --- | --- |
+| Normal worktree TypeScript `TS2688` failures | Host contamination from ancestor ambient types | Not causal |
+| Isolated typecheck at the original SHA | Passed | Confirms CG-011 code is not causal |
+| Literal `tests/**/*.test.ts` test glob | Pre-existing harness defect | Not causal |
+| CG-011 closure | Blocked pending CG-011R | Harness repair required before formal closure |
+
+### Allowed and forbidden surfaces
+
+**Allowed:** `package.json` test script; this reconciliation appendix; `docs/evidence/CG-011_CAPABILITY_RESOURCE_SCOPE.md` reconciliation record.
+
+**Forbidden:** OMC worktree and OMC SHA; `BUILD_STATE.json`; package lockfiles; TypeScript configuration; source, tests, adapters, CI/workflows, registries, and all other files.
+
+### One-line repair
+
+Replace the literal glob test command with `tsx --test tests/*.test.ts`, which matches the confirmed flat test layout.
