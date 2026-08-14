@@ -1,6 +1,6 @@
 # cin-gen-runtime
 
-Curious approach for a **carefully crafted, production-ready** intelligently bundled video generator:
+A curious approach to a **carefully crafted, production-ready, intelligently bundled** video generator:
 
 - **Elite output profile**: produce consistent cinema-safe defaults (24/30 fps, high-bitrate H.264/H.265 presets, normalized audio, deterministic render settings).
 - **Lightweight runtime**: keep the generator thin by favoring local, composable pipelines (scene spec → timeline → renderer) over heavy orchestration.
